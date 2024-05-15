@@ -1,5 +1,7 @@
 Revision history for Pod-Weaver-Role-SectionReplacer
 
+        Removed use of Moose::Autobox
+
 1.00    Version released at 2010-09-15-09:48.
         Released rc 0.99_02 as stable.
 

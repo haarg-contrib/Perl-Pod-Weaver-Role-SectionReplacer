@@ -5,8 +5,8 @@ package Pod::Weaver::Role::SectionReplacer;
 use Moose::Role;
 with 'Pod::Weaver::Role::Transformer';
 
-use Moose::Autobox 0.11;
 use Pod::Elemental::Selectors -all;
+use List::Util qw(first any);
 
 our $VERSION = '1.00';
 
@@ -44,13 +44,15 @@ sub transform_document {
       $content =~ s/\s+$//;
 
       return( $command_selector->( $_[ 0 ] ) &&
-        $aliases->any() eq $content );
+        any { $_ eq $content } @$aliases );
     };
 
-  return unless $document->children->grep($named_selector)->length;
+  my $original_section = first { $named_selector->($_) } @{ $document->children };
+
+  return unless defined $original_section;
 
   #  Take the first matching section found...
-  $self->original_section($document->children->grep($named_selector)->first);
+  $self->original_section($original_section);
 
   #  ...and prune it from the document.
   my $in_node = $document->children;
